@@ -1,8 +1,8 @@
 <?php
 /*
- * @copyright Copyright 2008 - http://www.innov-concept.com
+ * @copyright 2008 - https://www.clicshopping.org
  * @Brand : ClicShopping(Tm) at Inpi all right Reserved
- * @license GPL 2 License & MIT Licencse
+ * @license GPL 2 & MIT
 
 */
 
