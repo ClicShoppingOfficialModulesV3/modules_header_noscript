@@ -1,12 +1,14 @@
 <?php
-/*
- * @copyright 2008 - https://www.clicshopping.org
- * @Brand : ClicShopping(Tm) at Inpi all right Reserved
- * @license GPL 2 & MIT
+/**
+ *
+ *  @copyright 2008 - https://www.clicshopping.org
+ *  @Brand : ClicShopping(Tm) at Inpi all right Reserved
+ *  @Licence GPL 2 & MIT
+ *  @licence MIT - Portion of osCommerce 2.4
+ *
+ *
+ */
 
-*/
-
-  use ClicShopping\OM\HTML;
   use ClicShopping\OM\Registry;
   use ClicShopping\OM\CLICSHOPPING;
 
@@ -33,8 +35,17 @@
     public function execute() {
       $CLICSHOPPING_Template = Registry::get('Template');
 
-      $CLICSHOPPING_Template->addBlock('<style>.no-script { border: 1px solid #ddd; border-width: 0 0 1px; background: #ffff90; font: 14px verdana; line-height: 1.25; text-align: center; color: #2f2f2f; } .no-script .no-script-inner { width: 950px; margin: 0 auto; padding: 5px; } .no-script p { margin: 0; }</style>', $this->group);
-      $CLICSHOPPING_Template->addBlock('<noscript><div class="no-script"><div class="no-script-inner">' . HTML::outputProtected(MODULE_HEADER_NOSCRIPT_TEXT) . '</div></div></noscript>', $this->group);
+      $content_width = MODULE_HEADER_NOSCRIPT_CONTENT_WIDTH;
+
+      $header_template = '<!-- header no script start -->';
+
+      ob_start();
+      require($CLICSHOPPING_Template->getTemplateModules($this->group . '/content/header_noscript'));
+      $header_template .= ob_get_clean();
+
+      $header_template .= '<!-- header no script end -->' . "\n";
+
+      $CLICSHOPPING_Template->addBlock($header_template, $this->group);
     }
 
     public function isEnabled() {
@@ -62,9 +73,21 @@
       );
 
       $CLICSHOPPING_Db->save('configuration', [
+          'configuration_title' => 'Veuillez indiquer la largeur du contenu',
+          'configuration_key' => 'MODULE_HEADER_NOSCRIPT_CONTENT_WIDTH',
+          'configuration_value' => '12',
+          'configuration_description' => 'Veuillez indiquer une largeur d\'affichage',
+          'configuration_group_id' => '6',
+          'sort_order' => '2',
+          'set_function' => 'clic_cfg_set_content_module_width_pull_down',
+          'date_added' => 'now()'
+        ]
+      );
+
+      $CLICSHOPPING_Db->save('configuration', [
           'configuration_title' => 'Ordre de tri d\'affichage',
           'configuration_key' => 'MODULE_HEADER_NOSCRIPT_SORT_ORDER',
-          'configuration_value' => '145',
+          'configuration_value' => '1',
           'configuration_description' => 'Ordre de tri pour l\'affichage (Le plus petit nombre est montré en premier)',
           'configuration_group_id' => '6',
           'sort_order' => '0',
@@ -72,10 +95,6 @@
           'date_added' => 'now()'
         ]
       );
-
-      return $CLICSHOPPING_Db->save('configuration', ['configuration_value' => '1'],
-                                                ['configuration_key' => 'WEBSITE_MODULE_INSTALLED']
-                              );
     }
 
     public function remove() {
@@ -84,6 +103,7 @@
 
     public function keys() {
       return array('MODULE_HEADER_NOSCRIPT_STATUS',
+                   'MODULE_HEADER_NOSCRIPT_CONTENT_WIDTH',
                    'MODULE_HEADER_NOSCRIPT_SORT_ORDER'
                   );
     }
